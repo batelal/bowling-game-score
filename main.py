@@ -211,7 +211,6 @@ def bowling_game(name):
         #Print score board
         y=0
         for j in range(0, i+1) :
-            print(f"Total Score for Round {j+1}: ", totalScoresList[j])
             if bowlingRoundsList[j].getStrikeInd() == False:
                 ScoreListPrint[y] = bowlingRoundsList[j].getThrow1()
             else:
@@ -246,6 +245,11 @@ def bowling_game(name):
             print("--------------------------------------------------------------------------------------------------------------------------")
             print(f"|   {TotalScoreListPrint[0]}     ||     {TotalScoreListPrint[1]}    ||   {TotalScoreListPrint[2]}     ||   {TotalScoreListPrint[3]}    ||   {TotalScoreListPrint[4]}    ||   {TotalScoreListPrint[5]}    ||   {TotalScoreListPrint[6]}    ||   {TotalScoreListPrint[7]}    ||   {TotalScoreListPrint[8]}    ||   {TotalScoreListPrint[9]}     ||   ")
 
+    if(i==9):
+        print("   ")
+        print("----------------------------------------------------")
+        print(f'**** Great Game {UserName}. Your Total Score is:  {TotalScoreListPrint[9]} ****')
+        print("----------------------------------------------------")
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
