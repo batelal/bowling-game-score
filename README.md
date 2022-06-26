@@ -16,4 +16,4 @@ Follow the Use Cases below and for each one check the the scores are correct acc
   7. For each round enter a score - score for 1st throw of the last round is 10 (Strike) - make sure the user gets additional 3rd throw and the score is included
   8. For each round enter a score - score for 2 throws of the last round is 10 (Spare) - make sure the user gets additional 3rd throw and the score is included
   9. For each round enter a score - score for 2 throws of the last round is less than 10 - make sure the user does not get additional 3rd throw 
-  10. 
+  
