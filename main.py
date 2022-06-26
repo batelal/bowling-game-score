@@ -14,9 +14,6 @@ class round:
         self.__isLastRound = False
 
 
-    def printround(self):
-       print(f"(throw1: {self.__throw1}, throw2: {self.__throw2})")
-
     def __str__(self):
         if(self.__isLastRound):
             return f"(throw1: {self.__throw1}, throw2: {self.__throw2}, throw3: {self.__throw3}, totalScore: {self.__totalRoundScore}, Strike Ind: {self.__isStrike}, Spare Ind: {self.__isSpare}, FinalScore Ind: {self.__isFinalScore}, LastRound Ind: {self.__isLastRound})"
@@ -28,18 +25,22 @@ class round:
            self.__throw1 = throw1
         else:
             print("Given number is out of range, please enter a number between 0 and 10")
+            raise Exception()
 
     def setThrow2(self, throw2):
         if throw2 <= 10 and throw2 >= 0:
            self.__throw2 = throw2
         else:
             print("Given number is out of range, please enter a number between 0 and 10")
+            raise Exception()
 
     def setThrow3(self, throw3):
         if throw3 <= 10 and throw3 >= 0:
            self.__throw3 = throw3
         else:
             print("Given number is out of range, please enter a number between 0 and 10")
+            raise Exception()
+
     def setStrikeInd(self):
         self.__isStrike = True
 
@@ -100,36 +101,40 @@ def bowling_game(name):
             r.setLastRoundInd()
             r.setFinalScoreInd()
 
-        print('Enter your score in  round {} throw 1 '.format(i+1))
-        try:
-            throw1 = int(input())
-            r.setThrow1(throw1)
-        except Exception as error:
-            print(error)
-            break
+        while (True):
+            print('Enter your score in  round {} throw 1 '.format(i+1))
+            try:
+                throw1 = int(input())
+                r.setThrow1(throw1)
+                break
+            except Exception as error:
+                print(error)
+
 
         #If user did Strike
         if throw1 == 10:
             r.setStrikeInd()
             if r.getLastRoundInd():
-                print('Enter your score in  round {} throw 2 '.format(i + 1))
-                try:
-                    throw2 = int(input())
-                    r.setThrow2(throw2)
-                except Exception as error:
-                    print(error)
-                    break
+                while (True):
+                    print('Enter your score in  round {} throw 2 '.format(i + 1))
+                    try:
+                        throw2 = int(input())
+                        r.setThrow2(throw2)
+                        break
+                    except Exception as error:
+                        print(error)
 
                 if throw1 + throw2 == 10:
                     r.setSpareInd()
         else:
-            print('Enter your score in  round {} throw 2 '.format(i+1))
-            try:
-                throw2 = int(input())
-                r.setThrow2(throw2)
-            except Exception as error:
-                print(error)
-                break
+            while(True):
+                print('Enter your score in  round {} throw 2 '.format(i+1))
+                try:
+                    throw2 = int(input())
+                    r.setThrow2(throw2)
+                    break
+                except Exception as error:
+                    print(error)
 
             #If user did Spare
             if throw1 + throw2 == 10:
@@ -137,14 +142,15 @@ def bowling_game(name):
 
         #For the last round if Strike or Spare give Throw 3
         if r.getLastRoundInd() and (r.getSpareInd() or r.getStrikeInd()):
-            print('Enter your score in  round {} throw 3 '.format(i + 1))
-            try:
-                throw3 = int(input())
-                r.setThrow3(throw3)
-                print(f"(***Throw 3: ", r.getThrow3())
-            except Exception as error:
-                print(error)
-                break
+            while (True):
+                print('Enter your score in  round {} throw 3 '.format(i + 1))
+                try:
+                    throw3 = int(input())
+                    r.setThrow3(throw3)
+                    break
+                except Exception as error:
+                    print(error)
+
 
         if r.getLastRoundInd() == False and r.getStrikeInd() == False:
             if throw1 + throw2 > 10:
@@ -154,41 +160,55 @@ def bowling_game(name):
         r.updateTotalRoundScore()
         bowlingRoundsList.append(r)
 
-        #Give Bonus for Strike or Spare
-        if (i>0) and (bowlingRoundsList[i-1].getStrikeInd()) :
-            strikeBonus = totalScoresList[i-1] + r.getThrow1() + r.getThrow2()
-            totalScoresList[i-1] = strikeBonus
-            print(f"(Total Score for Round for strike {i - 1}: ", totalScoresList[i - 1])
-            bowlingRoundsList[i - 1].setFinalScoreInd()
-            #Check if 2 Strikes in a row
-            If (i>1) and (bowlingRoundsList[i-2].getStrikeInd()):
-                strikeBonus = totalScoresList[i - 2] + totalScoresList[i - 1] + r.getThrow1()
-                totalScoresList[i - 1] = strikeBonus
-                print(f"(Total Score for Round for strike {i - 2}: ", totalScoresList[i - 2])
-                bowlingRoundsList[i - 2].setFinalScoreInd()
 
-        elif (i>0) and (bowlingRoundsList[i-1].getSpareInd()):
+        #Give Bonus for Strike
+        if (i==1) and (bowlingRoundsList[i-1].getStrikeInd() == True) :
+            strikeBonus = totalScoresList[i-1] + r.getTotalRoundScore()
+            totalScoresList[i-1] = strikeBonus
+            if (bowlingRoundsList[i].getStrikeInd() == False):
+                bowlingRoundsList[i - 1].setFinalScoreInd()
+
+        if (i > 1) and (bowlingRoundsList[i - 1].getStrikeInd() == True) and (bowlingRoundsList[i].getStrikeInd() == False):
+            strikeBonus = totalScoresList[i - 1] + r.getTotalRoundScore()
+            totalScoresList[i - 1] = strikeBonus
+            if (bowlingRoundsList[i].getStrikeInd() == False):
+                bowlingRoundsList[i - 1].setFinalScoreInd()
+
+        if (i > 1) and (bowlingRoundsList[i - 1].getStrikeInd() == True) and (bowlingRoundsList[i].getStrikeInd() == True):
+            strikeBonus = totalScoresList[i - 1] + r.getTotalRoundScore()
+            totalScoresList[i - 1] = strikeBonus
+
+
+        #Check if 2 strikes in a row
+        if (i>1) and (bowlingRoundsList[i-1].getStrikeInd() == True) and (bowlingRoundsList[i-2].getStrikeInd() == True):
+            #update for both strikes in a row
+            strikeBonus = totalScoresList[i-2] + r.getThrow1()
+            totalScoresList[i-2] = strikeBonus
+            strikeBonus = totalScoresList[i - 2] + bowlingRoundsList[i-1].getTotalRoundScore() + r.getTotalRoundScore()
+            totalScoresList[i - 1] = strikeBonus
+            bowlingRoundsList[i - 2].setFinalScoreInd()
+            bowlingRoundsList[i - 1].setFinalScoreInd()
+
+        # Give Bonus for Spare
+        if (i>0) and (bowlingRoundsList[i-1].getSpareInd()):
             spareBonus = totalScoresList[i-1] + r.getThrow1()
             totalScoresList[i - 1] = spareBonus
-            print(f"(Total Score for Round for spare {i-1}: ", totalScoresList[i-1])
             bowlingRoundsList[i - 1].setFinalScoreInd()
 
-        if (i>0):
-            totalScore = totalScoresList[i-1] + r.getTotalRoundScore()
-            totalScoresList.append(totalScore)
-        else:
+        # Update score in the list
+        if (i == 0):
             totalScoresList.append(r.getTotalRoundScore())
+        else:
+            totalScore = totalScoresList[i - 1] + r.getTotalRoundScore()
+            totalScoresList.append(totalScore)
 
-        if r.getStrikeInd() == False and r.getSpareInd() == False:
+        if ((r.getStrikeInd() == False) and (r.getSpareInd() == False)):
             r.setFinalScoreInd()
 
-        print(f"(***FinalScoreInd for Round {i}: ", bowlingRoundsList[i].getFinalScoreInd())
-        print(f"(Total Score for Round {i}: ", totalScoresList[i])
+        #print(bowlingRoundsList[i])
+        #print(totalScoresList[i])
 
-
-        print(bowlingRoundsList[i])
-        print(totalScoresList[i])
-
+        #Print score board
         y=0
         for j in range(0, i+1) :
             print(f"Total Score for Round {j+1}: ", totalScoresList[j])
@@ -212,11 +232,19 @@ def bowling_game(name):
 
             y=y+2
 
-
-        print("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-        print(f"| {ScoreListPrint[0]} | {ScoreListPrint[1]}  || {ScoreListPrint[2]} | {ScoreListPrint[3]}  || {ScoreListPrint[4]} | {ScoreListPrint[5]}  ||  {ScoreListPrint[6]} | {ScoreListPrint[7]}  ||  {ScoreListPrint[8]} | {ScoreListPrint[9]}  ||  {ScoreListPrint[10]} | {ScoreListPrint[11]}  ||  {ScoreListPrint[12]} | {ScoreListPrint[13]}  ||  {ScoreListPrint[14]} | {ScoreListPrint[15]} ||  {ScoreListPrint[16]} | {ScoreListPrint[17]} ||  {ScoreListPrint[18]} | {ScoreListPrint[19]} | {ScoreListPrint[20]} |")
-        print("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
-        print(f"|   {TotalScoreListPrint[0]}    ||   {TotalScoreListPrint[1]}   ||   {TotalScoreListPrint[2]}    ||   {TotalScoreListPrint[3]}    ||   {TotalScoreListPrint[4]}    ||   {TotalScoreListPrint[5]}    ||   {TotalScoreListPrint[6]}    ||   {TotalScoreListPrint[7]}    ||   {TotalScoreListPrint[8]}    ||   {TotalScoreListPrint[9]}   ||   {TotalScoreListPrint[9]}    ||")
+        print("------------------------------------------------------------------------------------------------------------------------------")
+        if bowlingRoundsList[j].getLastRoundInd() == True and (bowlingRoundsList[j].getStrikeInd() == True or bowlingRoundsList[j].getSpareInd() == True):
+            print("| Round 1 ||  Round 2  ||  Round 3 || Round 4 || Round 5 || Round 6 || Round 7 || Round 8 || Round 9 ||   Round 10   ||   ")
+            print("------------------------------------------------------------------------------------------------------------------------------")
+            print(f"|  {ScoreListPrint[0]} | {ScoreListPrint[1]}  ||   {ScoreListPrint[2]} | {ScoreListPrint[3]}    ||  {ScoreListPrint[4]} | {ScoreListPrint[5]}   ||  {ScoreListPrint[6]} | {ScoreListPrint[7]}  ||  {ScoreListPrint[8]} | {ScoreListPrint[9]}  ||  {ScoreListPrint[10]} | {ScoreListPrint[11]}  ||  {ScoreListPrint[12]} | {ScoreListPrint[13]}  ||  {ScoreListPrint[14]} | {ScoreListPrint[15]}  ||  {ScoreListPrint[16]} | {ScoreListPrint[17]}  ||  {ScoreListPrint[18]} | {ScoreListPrint[19]}  | {ScoreListPrint[20]} ||")
+            print("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+            print(f"|   {TotalScoreListPrint[0]}     ||     {TotalScoreListPrint[1]}    ||   {TotalScoreListPrint[2]}     ||   {TotalScoreListPrint[3]}    ||   {TotalScoreListPrint[4]}    ||   {TotalScoreListPrint[5]}    ||   {TotalScoreListPrint[6]}    ||   {TotalScoreListPrint[7]}    ||   {TotalScoreListPrint[8]}    ||     {TotalScoreListPrint[9]}       ||   ")
+        else:
+            print("| Round 1 ||  Round 2  ||  Round 3 || Round 4 || Round 5 || Round 6 || Round 7 || Round 8 || Round 9 || Round 10 ||   ")
+            print("------------------------------------------------------------------------------------------------------------------------------")
+            print(f"|  {ScoreListPrint[0]} | {ScoreListPrint[1]}  ||   {ScoreListPrint[2]} | {ScoreListPrint[3]}   ||  {ScoreListPrint[4]} | {ScoreListPrint[5]}   ||  {ScoreListPrint[6]} | {ScoreListPrint[7]}  ||  {ScoreListPrint[8]} | {ScoreListPrint[9]}  ||  {ScoreListPrint[10]} | {ScoreListPrint[11]}  ||  {ScoreListPrint[12]} | {ScoreListPrint[13]}  ||  {ScoreListPrint[14]} | {ScoreListPrint[15]}  ||  {ScoreListPrint[16]} | {ScoreListPrint[17]}  ||  {ScoreListPrint[18]} | {ScoreListPrint[19]}   ||")
+            print("--------------------------------------------------------------------------------------------------------------------------")
+            print(f"|   {TotalScoreListPrint[0]}     ||     {TotalScoreListPrint[1]}    ||   {TotalScoreListPrint[2]}     ||   {TotalScoreListPrint[3]}    ||   {TotalScoreListPrint[4]}    ||   {TotalScoreListPrint[5]}    ||   {TotalScoreListPrint[6]}    ||   {TotalScoreListPrint[7]}    ||   {TotalScoreListPrint[8]}    ||   {TotalScoreListPrint[9]}     ||   ")
 
 
 # Press the green button in the gutter to run the script.
